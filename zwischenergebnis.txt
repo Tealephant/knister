@@ -1,0 +1,24 @@
+beste bisherige Lösung: 90
++--+--+--+--+--+
+| 4| 4| 6| 5| 8|
++--+--+--+--+--+
+|10| 6| 7| 8| 9|
++--+--+--+--+--+
+|10|10| 8| 8|10|
++--+--+--+--+--+
+|10| 8|10| 5| 6|
++--+--+--+--+--+
+| 8| 6| 9| 5| 7|
++--+--+--+--+--+
+
+hat auch eins mit 91 gefunden, aber Feld wegen Bug nicht verfügbar
+
+nach ca 30 min.
+
+beachte: ist erst dabei dritte Zahl zu rotieren. Das heißt noch sehr viel verbleibende Zeit :(
+
+6 auf Position (1,1) impliziert, dass Reihenfolge innerhalb der Diagonale nicht egal ist, obwohl auf der anderen Diagonale nur 8ten stehen, denn sonst wäre die genau so gute Lösung mit 5 an dieser Position zuerst gefunden worden. 
+
+nicht unbedingt, vlt könnte z.B 6 an Pos (3,0) das so ändern, dass 5 auch auf (1,1) stehen könnte
+
+frage: gibt es eine Belegung mit der gleichen Punktzahl, wo aber die Straße auf der Diagonale von 5-9 geht?
