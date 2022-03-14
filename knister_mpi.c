@@ -240,6 +240,30 @@ int get_board_value(int* board)
 }
 
 int board1[N][N] = {
+    {8,9,6,5,7},
+    {9,7,6,5,8},
+    {5,11,4,2,5},
+    {7,8,6,5,4},
+    {6,10,4,2,6}
+};
+
+int board2[N][N] = {
+    {6,5,4,3,7},
+    {5,7,4,8,6},
+    {8,8,10,8,8},
+    {7,6,4,8,5},
+    {9,9,12,12,9}
+};
+
+int board3[N][N] = {
+    {7,7,2,2,7},
+    {8,6,8,4,11},
+    {4,4,8,4,8},
+    {5,5,5,9,9},
+    {6,8,7,9,10}
+};
+
+int board_test1[N][N] = {
     {9,2,10,8,10},
     {8,5,8,8,7},
     {7,7,7,7,7},
@@ -247,7 +271,7 @@ int board1[N][N] = {
     {10,2,4,8,8}
 };
 
-int board2[N][N] = {
+int board_test2[N][N] = {
     {7,6,9,5,8},
     {4,6,6,8,4},
     {10,8,8,10,10},
@@ -298,6 +322,9 @@ void find_solution(int* board, int pos, int* verfuegbar, int* best_yet, int* bes
 }
 
 //besten Zahlen für die Diagonalen finden
+/*Ausgabe in Array: 1 2 3 4 5 6 7 8 9
+5 steht in der Mitte beider Diagonalen
+*/
 void find_best_diagonals(int* long_row, int pos, int* verfuegbar, int* best_yet, int* best_nine)
 {
     if(pos == 2 * N - 1) {
@@ -414,7 +441,7 @@ int main(int argc, char** argv)
     if(rank == ROOT) {
         print_board(board);
         printf("Wert dieses Boards: %d\n", get_board_value(board));
-        copy_board(board, board2);
+        copy_board(board, board1);
 
         for(int i = 0; i < N; i++) {
             for(int j = 0; j < N; j++) {
