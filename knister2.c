@@ -102,13 +102,13 @@ void print_seperator_line(int n)
     printf("+\n");
 }
 
-void print_board(int** board)
+void print_board(int* board)
 {
     for(int i = 0; i < N; i++) {
         print_seperator_line(N);
         for(int j = 0; j < N; j++) {
             printf("|");
-            printf("%2d", board[i][j]);
+            printf("%2d", board[i * N + j]);
         }
         printf("|\n");
     }
@@ -269,39 +269,39 @@ int get_row_value(int* row)
     return 0;
 }
 
-int get_board_value(int** board)
+int get_board_value(int* board)
 {
     int board_value = 0;
     //count rows
     for(int i = 0; i < N; i++) {
-        board_value += get_row_value(board[i]);
+        board_value += get_row_value(board + i * N);
     }
     //count columns
     int buffer[N];
     for(int j = 0; j < N; j++) {
         for(int i = 0; i < N; i++) {
-            buffer[i] = board[i][j];
+            buffer[i] = board[i * N + j];
         }
         board_value += get_row_value(buffer);
     }
     //count diagonals
     for(int i = 0; i < N; i++) {
-        buffer[i] = board[i][i];
+        buffer[i] = board[i * N + i];
     }
     board_value += 2 * get_row_value(buffer);
     for(int i = 0; i < N; i++)
     {
-        buffer[i] = board[N - i - 1][i];
+        buffer[i] = board[N * i + (N - i - 1)];
     }
     board_value += 2 * get_row_value(buffer);
     return board_value;
 }
 
-void copy_board(int** target, int source[N][N])
+void copy_board(int* target, int source[N][N])
 {
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < N; j++) {
-            target[i][j] = source[i][j];
+            target[i * N + j] = source[i][j];
         }
     }
 }
@@ -338,7 +338,7 @@ void find_best_diagonals(int* long_row, int pos, int* verfuegbar, int* best_yet,
     }    
 }
 
-void find_best_rest(int** board, int pos, int* verfuegbar, int* best_yet, int** best_board, clock_t starttime)
+void find_best_rest(int* board, int pos, int* verfuegbar, int* best_yet, int* best_board, clock_t starttime)
 {
     static unsigned long long combination_count = 0;
     if(pos >= N * N) {
@@ -353,7 +353,7 @@ void find_best_rest(int** board, int pos, int* verfuegbar, int* best_yet, int** 
             *best_yet = new_points;
             for(int i = 0; i < N; i++) {
                 for(int j = 0; j < N; j++) {
-                    best_board[i][j] = board[i][j];
+                    best_board[i * N + j] = board[i * N + j];
                 }
             }
             printf("Beste bisherige Lösung: %d\n", *best_yet);
@@ -363,7 +363,7 @@ void find_best_rest(int** board, int pos, int* verfuegbar, int* best_yet, int** 
     else {
         for(int k = 0; k < M; k++) {
             if(verfuegbar[k] > 0) {
-                board[pos / N][pos % N] = k + 2;
+                board[(pos / N) * N + (pos % N)] = k + 2;
                 verfuegbar[k]--;
                 int new_pos = pos + 1;
                 if(new_pos / N == new_pos % N || N - new_pos / N - 1 == new_pos % N) {
@@ -376,12 +376,9 @@ void find_best_rest(int** board, int pos, int* verfuegbar, int* best_yet, int** 
     }
 }
 
-void find_solution(int* verfuegbar, int** permutationen, int* best, int** best_board)
+void find_solution(int* verfuegbar, int** permutationen, int* best, int* best_board)
 {
-    int** board = calloc(N, sizeof(int*));
-    for(int i = 0; i < N; i++) {
-        board[i] = calloc(N, sizeof(int));
-    }
+    int* board = calloc(N * N, sizeof(int));
 
     //besten Diagonalen finden
     int* new_nine = calloc(2 * N - 1, sizeof(int));
@@ -415,13 +412,13 @@ void find_solution(int* verfuegbar, int** permutationen, int* best, int** best_b
     for(int k = 0; belegungen[k] != NULL; k++) {
         //Diagonalen belegen
         for(int j = 0; j < N/2; j++) {
-            board[j][j] = belegungen[k][j];
-            board[j + N/2 + 1][j + N/2 + 1] = belegungen[k][j + N/2];
+            board[j * N + j] = belegungen[k][j];
+            board[(j + N/2 + 1) * N + j + N/2 + 1] = belegungen[k][j + N/2];
 
-            board[j][N - j - 1] = belegungen[k][j + N];
-            board[j + N/2 + 1][N/2 - j - 1] = belegungen[k][j + N/2 + N - 1];
+            board[j * N + N - j - 1] = belegungen[k][j + N];
+            board[(j + N/2 + 1) * N + N/2 - j - 1] = belegungen[k][j + N/2 + N - 1];
 
-            board[N/2][N/2] = belegungen[k][N];
+            board[(N/2) * N + N/2] = belegungen[k][N];
         }
 
         printf("\nTeste Feld mit folgenden Diagonalen:\n");
@@ -479,13 +476,8 @@ int main(void)
     }
     fclose(file);
 
-    int** board = calloc(N, sizeof(int*));
-    for(int i = 0; i < N; i++) {
-        board[i] = calloc(N, sizeof(int));
-        for(int j = 0; j < N; j++) {
-            board[i][j] = 0;
-        }
-    }
+    int* board = calloc(N * N, sizeof(int));
+    
 
     copy_board(board, board2);
     print_board(board);
@@ -494,7 +486,7 @@ int main(void)
     int* verfuegbar = calloc(M, sizeof(int));
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < N; j++) {
-            verfuegbar[board[i][j] - 2]++;
+            verfuegbar[board[i * N + j] - 2]++;
         }
     }
 
@@ -508,16 +500,8 @@ int main(void)
         moeglichkeiten /= faculty(verfuegbar[i]);
     }
     printf("Anzahl Möglichkeiten: %e\n", moeglichkeiten);
-    int** new_board = calloc(N, sizeof(int*));
-    for(int i = 0; i < N; i++) {
-        new_board[i] = calloc(N, sizeof(int));
-    }
 
-    int** best_board = calloc(N, sizeof(int*));
-    for(int i = 0; i < N; i++) {
-        best_board[i] = calloc(N, sizeof(int));
-    }
-
+    int* best_board = calloc(N * N, sizeof(int));
     int best = 0;
     find_solution(verfuegbar, permutationen, &best, best_board);
     printf("Best possible value: %d\n", best);
